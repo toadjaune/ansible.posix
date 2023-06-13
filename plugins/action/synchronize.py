@@ -179,6 +179,13 @@ class ActionModule(ActionBase):
         self._remote_transport = self._connection.transport
         use_ssh_args = _tmp_args.pop('use_ssh_args', None)
 
+        # eci extends ssh, so we want it to be treated similarly
+        # or at least to let the user configure what needs to be configured for it to work
+        # https://github.com/ansible-collections/ansible.posix/issues/473
+        if self._connection.transport == 'eci':
+            self._connection.transport = 'ssh'
+
+
         if use_ssh_args and self._connection.transport == 'ssh':
             ssh_args = [
                 self._connection.get_option('ssh_args'),
